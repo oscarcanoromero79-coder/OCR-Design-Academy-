@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CATIA V5 — Cursos Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="logo-badge">⚙️</div>
+      <h1 class="hero-title">CATIA <span>V5</span></h1>
+      <p class="hero-sub">Cursos Online · Diseño 3D Profesional</p>
+      <p class="hero-desc">Domina el software de diseño industrial líder en la industria aeronáutica y automotriz</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Niveles</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num" id="statTotal">10</span><span class="stat-label">Cursos</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Online</span></div>
+      </div>
+    </div>
+    <div class="hero-lines"></div>
+  </header>
+
+  <!-- ADMIN TOOLBAR -->
+  <div class="admin-toggle-wrap">
+    <button class="admin-toggle-btn" onclick="requestAdminAccess()">
+      <span class="admin-icon">🔧</span> Panel de Administración
+    </button>
+    <button class="admin-toggle-btn btn-logout hidden" id="btnLogout" onclick="logoutAdmin()">
+      <span class="admin-icon">🔒</span> Cerrar sesión
+    </button>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginOverlay" class="modal-overlay hidden">
+    <div class="login-box">
+      <div class="login-icon">🔐</div>
+      <h2 class="login-title">Acceso Restringido</h2>
+      <p class="login-sub">Ingresa la contraseña de administrador</p>
+      <div class="login-field">
+        <input type="password" id="adminPassword" placeholder="Contraseña..."
+          onkeydown="if(event.key==='Enter') checkPassword()" autocomplete="off" />
+        <button class="login-btn" onclick="checkPassword()">Entrar</button>
+      </div>
+      <p id="loginError" class="login-error hidden">Contraseña incorrecta</p>
+      <button class="login-cancel" onclick="closeLoginModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- VIDEO PREVIEW MODAL -->
+  <div id="videoOverlay" class="modal-overlay hidden" onclick="closeVideoModal(event)">
+    <div class="video-box">
+      <div class="video-header">
+        <h3 class="video-title" id="videoTitle">Vista previa del curso</h3>
+        <button class="video-close" onclick="closeVideoModal()">✕</button>
+      </div>
+      <div class="video-player-wrap">
+        <iframe id="videoFrame" src="" title="Vista previa" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen style="display:none;"></iframe>
+        <video id="videoTag" controls style="display:none; width:100%; border-radius:8px; background:#000;">
+          <source id="videoTagSrc" src="" />
+          Tu navegador no soporta reproducción de video.
+        </video>
+      </div>
+      <p class="video-hint">Haz clic fuera del video para cerrar</p>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" class="admin-panel hidden">
+    <div class="admin-inner">
+      <h2 class="admin-title">✏️ Agregar / Editar Curso</h2>
+      <div class="admin-form">
+
+        <div class="form-row full">
+          <label>Nombre del curso</label>
+          <input type="text" id="f-name" placeholder="Ej: Diseño de Superficies Avanzadas" />
+        </div>
+
+        <div class="form-row">
+          <label>Nivel</label>
+          <select id="f-level">
+            <option value="basico">🟢 Básico</option>
+            <option value="intermedio">🟡 Intermedio</option>
+            <option value="avanzado">🔴 Avanzado</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Precio (MXN $)</label>
+          <input type="number" id="f-price" placeholder="Ej: 1500" />
+        </div>
+
+        <div class="form-row full">
+          <label>Tipo / Descripción corta</label>
+          <input type="text" id="f-type" placeholder="Ej: Modelado 3D / Superficies NURBS" />
+        </div>
+
+        <div class="form-row full">
+          <label>Contenidos del curso (uno por línea)</label>
+          <textarea id="f-items" rows="4" placeholder="Introducción al ambiente CATIA&#10;Creación de sólidos básicos&#10;Operaciones booleanas"></textarea>
+        </div>
+
+        <div class="form-row full">
+          <label>🖼️ Imagen de portada (URL o ruta local)</label>
+          <input type="text" id="f-image"
+            placeholder="img/curso.jpg  ó  https://ejemplo.com/imagen.jpg"
+            oninput="previewImage(this.value)" />
+          <div id="img-preview-wrap" class="media-preview hidden">
+            <img id="img-preview" src="" alt="Preview imagen" onerror="this.src=''" />
+          </div>
+          <p class="form-hint">💡 Google Drive: <code>https://drive.google.com/uc?export=view&id=TU_ID</code></p>
+        </div>
+
+        <div class="form-row full">
+          <label>🎬 Video de vista previa</label>
+          <input type="text" id="f-video"
+            placeholder="https://youtube.com/watch?v=XXX  ó  https://vimeo.com/123  ó  video.mp4"
+            oninput="previewVideoInput(this.value)" />
+          <div id="video-preview-wrap" class="media-preview hidden">
+            <div class="video-mini-wrap">
+              <iframe id="video-preview-frame" src="" frameborder="0"
+                allow="autoplay; encrypted-media" allowfullscreen style="display:none;"></iframe>
+              <video id="video-preview-tag" controls style="display:none; width:100%;">
+                <source id="video-preview-tag-src" src="" />
+              </video>
+            </div>
+          </div>
+          <p class="form-hint">
+            💡 YouTube: <code>https://youtube.com/watch?v=abc</code> ·
+               Vimeo: <code>https://vimeo.com/123456</code> ·
+               MP4: URL directa al archivo
+          </p>
+        </div>
+
+        <div class="form-row full">
+          <label>📱 WhatsApp (código país + número, sin +)</label>
+          <input type="text" id="f-wa" placeholder="Ej: 522212345678" />
+        </div>
+
+        <div class="form-actions full">
+          <button class="btn-save" onclick="saveCourse()">💾 Guardar Curso</button>
+          <button class="btn-cancel" onclick="cancelEdit()">✖ Cancelar</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="tabs">
+      <button class="tab active" onclick="filterLevel('todos', this)">Todos</button>
+      <button class="tab" onclick="filterLevel('basico', this)">🟢 Básico</button>
+      <button class="tab" onclick="filterLevel('intermedio', this)">🟡 Intermedio</button>
+      <button class="tab" onclick="filterLevel('avanzado', this)">🔴 Avanzado</button>
+    </div>
+
+    <section class="level-section" id="section-basico">
+      <div class="section-header basico">
+        <div class="section-icon">🟢</div>
+        <div><h2 class="section-title">Nivel Básico</h2><p class="section-sub">Fundamentos para iniciar en CATIA V5</p></div>
+      </div>
+      <div class="cards-grid" id="grid-basico"></div>
+    </section>
+
+    <section class="level-section" id="section-intermedio">
+      <div class="section-header intermedio">
+        <div class="section-icon">🟡</div>
+        <div><h2 class="section-title">Nivel Intermedio</h2><p class="section-sub">Amplía tus capacidades de diseño</p></div>
+      </div>
+      <div class="cards-grid" id="grid-intermedio"></div>
+    </section>
+
+    <section class="level-section" id="section-avanzado">
+      <div class="section-header avanzado">
+        <div class="section-icon">🔴</div>
+        <div><h2 class="section-title">Nivel Avanzado</h2><p class="section-sub">Domina técnicas profesionales de industria</p></div>
+      </div>
+      <div class="cards-grid" id="grid-avanzado"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-logo">⚙️ CATIA V5 Cursos</span>
+      <span class="footer-copy">© 2025 · Todos los derechos reservados</span>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
