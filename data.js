@@ -7,7 +7,7 @@
 // Número de WhatsApp por defecto (cambia aquí el tuyo)
 // Formato: código país + número, SIN el signo +
 // Ejemplo México: 521XXXXXXXXXX
-const DEFAULT_WA = "521XXXXXXXXXX"; // ← CAMBIA ESTE NÚMERO
+const DEFAULT_WA = "+5215649878014"; // ← CAMBIA ESTE NÚMERO
 
 // ======================================================
 //  CÓMO AGREGAR IMÁGENES
